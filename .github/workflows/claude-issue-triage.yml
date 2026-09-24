@@ -1,0 +1,58 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened, edited]
+
+concurrency:
+  group: triage-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  triage:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude issue triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          prompt: |
+            Analiza el issue #${{ github.event.issue.number }} de este repositorio (Vanilla Tetris: game.js, index.html, style.css).
+
+            Pasos:
+            1. `gh issue view ${{ github.event.issue.number }}` para leer título y cuerpo.
+            2. `gh label list` para ver los labels disponibles del repo.
+            3. Lee `CLAUDE.md` y el código relevante (`game.js`, `index.html`, `style.css`) para entender el problema descrito.
+            4. Asigna labels apropiados usando SOLO labels que ya existen en el repo (no crees labels nuevos):
+               `gh issue edit ${{ github.event.issue.number }} --add-label "label1,label2"`
+               Si el issue fue editado y algún label de tipo ya no aplica, quítalo con `--remove-label`.
+            5. Publica (o actualiza si ya existe) un comentario de diagnóstico técnico. Usa el marcador
+               `<!-- claude-triage -->` al inicio del comentario. Si ya existe un comentario con ese marcador
+               (por ejemplo de una edición previa del issue), actualízalo en vez de crear uno nuevo
+               (busca el comentario con `gh issue view --comments` o `gh api`, y edítalo con
+               `gh issue comment ${{ github.event.issue.number }} --edit-last` si es el último, o con
+               `gh api` PATCH sobre el comentario correspondiente si no lo es).
+
+               El comentario debe tener este formato (en español):
+               - **Resumen**: una o dos frases del problema.
+               - **Labels asignados**: lista de labels y por qué.
+               - **Causa probable**: análisis técnico de la causa raíz.
+               - **Archivos/funciones afectadas**: referencias tipo `game.js:línea` o nombre de función.
+               - **Propuesta de solución**: pasos concretos para implementar el fix.
+               - **Riesgos / preguntas abiertas**: cualquier ambigüedad a resolver antes de codificar.
+
+            No modifiques código ni abras pull requests. Solo etiqueta y comenta.
+          claude_args: |
+            --allowedTools "Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh label list:*),Bash(gh api:*),Read,Glob,Grep"
