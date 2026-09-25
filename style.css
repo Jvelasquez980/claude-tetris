@@ -236,3 +236,102 @@ kbd {
 #restart-btn:hover {
   background: var(--restart-hover);
 }
+
+.hidden {
+  display: none;
+}
+
+.overlay-heading {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--title-color);
+}
+
+/* ---- Records ---- */
+.records-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 220px;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+}
+
+.records-table td {
+  padding: 4px 6px;
+  color: var(--fg);
+  text-align: left;
+}
+
+.records-table tr.record-highlight td {
+  background: var(--kbd-bg);
+  color: var(--value-color);
+  font-weight: 700;
+}
+
+.records-stats {
+  font-size: 12px;
+  color: var(--label-color);
+  text-align: center;
+}
+
+.save-section {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.save-section input {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  color: var(--fg);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  width: 140px;
+}
+
+.save-section input:focus {
+  outline: none;
+  border-color: var(--value-color);
+}
+
+#overlay-save-btn,
+.secondary-btn {
+  margin-top: 4px;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+#overlay-save-btn {
+  background: var(--restart-bg);
+  color: var(--restart-color);
+  border: none;
+}
+
+#overlay-save-btn:hover {
+  background: var(--restart-hover);
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid var(--kbd-border);
+  color: var(--controls-color);
+}
+
+.secondary-btn:hover {
+  border-color: var(--value-color);
+  color: var(--value-color);
+}
