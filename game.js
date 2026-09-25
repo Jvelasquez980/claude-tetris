@@ -60,7 +60,12 @@ const THEME_KEY = 'tetris-theme';
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 let gridLineColor, blockHighlightColor;
 let startLevel = 1;
+let currentStartLevel = 1;
 let ignoreHeldKeys = false;
+
+function computeDropInterval(lvl) {
+  return Math.max(100, 1000 - (lvl - 1) * 90);
+}
 
 function updateThemeColors() {
   const styles = getComputedStyle(document.documentElement);
@@ -141,8 +146,8 @@ function applyLineScore(cleared) {
   if (!cleared) return;
   lines += cleared;
   score += (LINE_SCORES[cleared] || 0) * level;
-  level = Math.max(startLevel, Math.floor(lines / 10) + 1);
-  dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+  level = Math.max(currentStartLevel, Math.floor(lines / 10) + 1);
+  dropInterval = computeDropInterval(level);
   updateHUD();
 }
 
@@ -339,10 +344,11 @@ function init() {
   board = createBoard();
   score = 0;
   lines = 0;
-  level = startLevel;
+  currentStartLevel = startLevel;
+  level = currentStartLevel;
   paused = false;
   gameOver = false;
-  dropInterval = Math.max(100, 1000 - (startLevel - 1) * 90);
+  dropInterval = computeDropInterval(currentStartLevel);
   dropAccum = 0;
   lastTime = performance.now();
   next = randomPiece();
@@ -356,7 +362,10 @@ function init() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyP' || e.code === 'Escape') { togglePause(); return; }
+  if (e.code === 'KeyP' || e.code === 'Escape') {
+    if (!e.repeat) togglePause();
+    return;
+  }
   if (paused || gameOver) return;
   if (ignoreHeldKeys) {
     if (e.repeat) return;
