@@ -14,6 +14,7 @@ const COLORS = [
   '#9bbdff', // J - pale blue
   '#ffb74d', // L - orange
   '#ffffff', // power-up - destroy row
+  '#f06292', // Y - challenge
 ];
 
 const PIECES = [
@@ -26,11 +27,14 @@ const PIECES = [
   [[6,0,0],[6,6,6],[0,0,0]],                  // J
   [[0,0,7],[7,7,7],[0,0,0]],                  // L
   [[8]],                                       // power-up
+  [[9,0,9],[0,9,0],[0,9,0]],                  // Y - challenge
 ];
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 const POWERUP_TYPE = 8;
 const POWERUP_CHANCE = 0.1;
+const Y_TYPE = 9;
+const Y_CHANCE = 0.03;
 
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
@@ -76,7 +80,10 @@ function createBoard() {
 }
 
 function randomPiece() {
-  const type = Math.random() < POWERUP_CHANCE ? POWERUP_TYPE : Math.floor(Math.random() * 7) + 1;
+  const roll = Math.random();
+  const type = roll < POWERUP_CHANCE ? POWERUP_TYPE
+    : roll < POWERUP_CHANCE + Y_CHANCE ? Y_TYPE
+    : Math.floor(Math.random() * 7) + 1;
   const shape = PIECES[type].map(row => [...row]);
   return { type, shape, x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2), y: 0 };
 }
