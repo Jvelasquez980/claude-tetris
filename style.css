@@ -50,6 +50,18 @@
   --toggle-color: #1a1a25;
 }
 
+/* Skin overrides — must come after the theme blocks (same specificity) so
+   they win in every theme × skin combination, e.g. Neon + Light mode. */
+[data-skin="neon"] {
+  --board-bg: #000000;
+  --grid-line: #0d3b3b;
+  --block-highlight: rgba(255, 255, 255, 0.25);
+}
+
+[data-skin="pastel"] {
+  --block-highlight: rgba(255, 255, 255, 0.55);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -154,6 +166,21 @@ body {
   border: 1px solid var(--board-border);
   background: var(--board-bg);
   border-radius: 4px;
+}
+
+#skin-select {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  border-radius: 4px;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+#skin-select:focus {
+  outline: 1px solid var(--value-color);
 }
 
 /* ---- Controles ---- */
